@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { appointment } from '../../generated/prisma';
 
 @Injectable()
 export class AppointmentService {
-  create(createAppointmentDto: CreateAppointmentDto) {
-    return 'This action adds a new appointment';
+  constructor(private prisma: PrismaService) {}
+ 
+  async create(createAppointmentDto: CreateAppointmentDto): Promise<appointment> {
+    return this.prisma.appointment.create({
+      data: createAppointmentDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all appointment`;
+  // get all appointment
+  async findAll(): Promise<appointment[]> {
+    return this.prisma.appointment.findMany();
   }
 
   findOne(id: number) {
