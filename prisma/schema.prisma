@@ -25,7 +25,7 @@ model doctor {
   user           user             @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   medical_record medical_record[]
   prescription   prescription[]
-  schedule       schedule?
+  schedule       schedule[]
 }
 
 model medical_record {
@@ -102,7 +102,7 @@ model schedule {
   id        String  @id @default(uuid()) @db.Uuid
   doctor_id String? @db.Uuid
   timeslot  String?
-  doctor    doctor  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  doctor    doctor? @relation(fields: [doctor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model tracking {
@@ -117,13 +117,27 @@ model user {
   password                              String?        @db.VarChar
   createdAt                             DateTime?      @db.Timestamp(6)
   role                                  String?
-  id_card                               String?
-  health_benefits                       String?
+  id_card                               String         @unique
   username                              String?        @unique(map: "user_username_unique")
   lastname                              String?
   name                                  String?
+  phone                                 String?
+  health_benefits                       String[]
   doctor                                doctor?
   notification                          notification[]
   patient_patient_hospital_numberTouser patient[]      @relation("patient_hospital_numberTouser")
   patient_patient_idTouser              patient?       @relation("patient_idTouser")
+  refresh_token                         refresh_token?
+}
+
+model refresh_token {
+  id        String   @id @db.Uuid
+  userId    String   @unique @db.Uuid
+  hashed    String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
