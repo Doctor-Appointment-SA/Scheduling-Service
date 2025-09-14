@@ -1,33 +1,81 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📌 Appointment Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+บริการ **Appointment Service** ทำหน้าที่จัดการเกี่ยวกับการนัดหมายในระบบ เช่น  
+- การนัดหมอของคนไข้  
+- การยกเลิกหรือแก้ไขการนัดหมาย  
+- การตรวจสอบสถานะของการนัด  
 
-## Description
+พัฒนาโดยใช้ **NestJS**, **Prisma ORM**, และ **PostgreSQL** เพื่อความเสถียรและขยายต่อได้ง่าย  
 
-Appointment Service
+---
 
-## Project setup
+## ✨ Features  
+
+- 📅 **คนไข้นัดหมอ**: สร้างการนัดหมายใหม่ (เลือกหมอ, วัน-เวลา, สถานะ)  COMPLETE
+- 🔄 **จัดการนัดหมาย**: แก้ไข/ยกเลิกการนัดที่มีอยู่แล้ว  
+- 📊 **ตรวจสอบสถานะนัด**: ดูรายละเอียดการนัด เช่น Pending, Confirmed, Cancelled  
+
+---
+
+## ⚙️ Project Setup  
+
+Clone โปรเจกต์และติดตั้ง dependencies  
 
 ```bash
-$ git clone https://github.com/Doctor-Appointment-SA/Scheduling-Service.git
-$ cd Scheduling-Service
+git clone https://github.com/Doctor-Appointment-SA/Scheduling-Service.git
+cd Scheduling-Service
 
-$ npm i
-$ npx prisma generate
+npm install
+npx prisma generate
 ```
 
-## Compile and run the project
+---
 
+## ▶️ Running the Project  
+
+### Development  
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start
 ```
+
+### Watch mode (Auto-reload)  
+```bash
+npm run start:dev
+```
+
+### Production  
+```bash
+npm run build
+npm run start:prod
+```
+
+---
+
+## 📡 Example API Endpoints  
+
+### Create Appointment  
+```http
+POST /appointment
+Content-Type: application/json
+
+{
+  "patient_id": "uuid",
+  "doctor_id": "uuid",
+  "appoint_date": "2025-09-11T15:00:00.000Z",
+  "status": "Pending"
+}
+```
+
+### Get Appointments  
+```http
+GET /appointment
+```
+
+---
+
+## 🛠️ Tech Stack  
+
+- **Backend Framework**: NestJS  
+- **ORM**: Prisma  
+- **Database**: PostgreSQL  
+- **Runtime**: Node.js  
