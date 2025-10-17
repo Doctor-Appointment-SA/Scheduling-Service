@@ -33,6 +33,22 @@ export class AppointmentService {
     return this.prisma.appointment.findMany();
   }
 
+  // get all doctor appointments with optional status filter
+  async findByDoctor(doctorId: string, status?: string) {
+    const where: any = { doctor_id: doctorId }; 
+
+    if (status) {
+      where.status = status;
+    }
+
+    return this.prisma.appointment.findMany({
+      where,
+      orderBy: {
+        appoint_date: 'asc',
+      }
+    })
+  }
+
   // findOne(id: number) {
   //   return `This action returns a #${id} appointment`;
   // }

@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -68,6 +69,23 @@ export class AppointmentController {
   @Get()
   findAll() {
     return this.appointmentService.findAll();
+  }
+
+  @Get('doctor/:doctor_id')
+  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string) {
+    return this.appointmentService.findByDoctor(doctorId, status);
+  }
+
+  // for logged-in doctor to get their own appointments
+  @Get('doctor/me')
+  findMyAppointments(@Request() req, @Query('status') status?: string) {
+    const doctorId = req.user.id;
+
+    if (req.user.role !== 'doctor') {
+      throw new BadRequestException('Only doctors can access their appointments');
+    }
+
+    return this.appointmentService.findByDoctor(doctorId, status);
   }
 
   // @Get(':id')
