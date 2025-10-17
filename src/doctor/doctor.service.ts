@@ -3,34 +3,38 @@ import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { doctor } from '../../generated/prisma';
-import axios from 'axios';
 
 @Injectable()
 export class DoctorService {
   constructor(private Prisma: PrismaService) {}
 
-  async create(createDoctorDto: CreateDoctorDto): Promise<doctor> {
-    const userRes = await axios.post('http://localhost:4001/api/users', {
-      name: createDoctorDto.name,
-      lastname: createDoctorDto.lastname,
-      password: createDoctorDto.password,
-      id_card: createDoctorDto.id_card,
-      phone: createDoctorDto.phone,
-      role: 'doctor',
-    });
+  async create(dto: CreateDoctorDto) {
+    return this.Prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: dto.name,
+          lastname: dto.lastname,
+          password: dto.password,
+          id_card: dto.id_card,
+          phone: dto.phone,
+          role: 'doctor',
+        },
+        select: { id: true },
+      });
 
-    const user = userRes.data;
-
-    return this.Prisma.doctor.create({
-      data: {
-        id: user.id,
-        specialty: createDoctorDto.specialty,
-      },
+      const doctor = await tx.doctor.create({
+        data: {
+          id: user.id,
+          specialty: dto.specialty,
+        },
+      });
+      
+      return doctor;
     });
   }
 
   async findAll(): Promise<doctor[]> {
-    return this.Prisma.doctor.findMany({include: { user: true }});
+    return this.Prisma.doctor.findMany({ include: { user: true } });
   }
 
   async findOne(id: number): Promise<doctor | null> {
