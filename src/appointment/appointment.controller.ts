@@ -70,12 +70,7 @@ export class AppointmentController {
   findAll() {
     return this.appointmentService.findAll();
   }
-
-  @Get('doctor/:doctor_id')
-  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string) {
-    return this.appointmentService.findByDoctor(doctorId, status);
-  }
-
+  
   // for logged-in doctor to get their own appointments
   @Get('doctor/me')
   findMyAppointments(@Request() req, @Query('status') status?: string) {
@@ -85,6 +80,11 @@ export class AppointmentController {
       throw new BadRequestException('Only doctors can access their appointments');
     }
 
+    return this.appointmentService.findByDoctor(doctorId, status);
+  }
+
+  @Get('doctor/:doctor_id')
+  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string) {
     return this.appointmentService.findByDoctor(doctorId, status);
   }
 
