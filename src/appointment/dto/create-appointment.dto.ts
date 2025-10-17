@@ -1,8 +1,13 @@
-import { IsDateString, IsNotEmpty, IsUUID, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, IsString, IsOptional } from 'class-validator';
 
 export class CreateAppointmentDto {
     @IsUUID()
-    readonly doctor_id: string;
+    @IsOptional()
+    readonly patient_id?: string;
+
+    @IsUUID()
+    @IsOptional()
+    readonly doctor_id?: string;
 
     @IsDateString()
     readonly appoint_date: string;
@@ -10,4 +15,7 @@ export class CreateAppointmentDto {
     @IsString()
     @IsNotEmpty()
     readonly status: string;
+
+    @IsString()
+    readonly detail?: string;
 }

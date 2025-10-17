@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x", "windows"]
 }
 
@@ -15,6 +15,7 @@ model appointment {
   doctor_id    String?   @db.Uuid
   appoint_date DateTime? @db.Timestamp(6)
   status       String?
+  detail       String?
   doctor       doctor?   @relation(fields: [doctor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   patient      patient?  @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -67,27 +68,26 @@ model patient {
 }
 
 model payment {
-  id              String        @id @default(uuid()) @db.Uuid
-  prescription_id String?       @db.Uuid
-  amount          Float?
-  status          String?
-  method          String?
-  created_at      DateTime?     @db.Timestamp(6)
-  prescription    prescription? @relation(fields: [prescription_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String         @id @default(uuid()) @db.Uuid
+  prescription_id String         @unique @db.Uuid
+  created_at      DateTime?      @db.Timestamp(6)
+  status          PaymentStatus  @default(PENDING)
+  method          PaymentMethod?
+  cost            Float?
+  prescription    prescription   @relation(fields: [prescription_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tracking        tracking?
 }
 
 model prescription {
   id                String              @id @default(uuid()) @db.Uuid
   patient_id        String?             @db.Uuid
   doctor_id         String?             @db.Uuid
-  medication        String?             @db.Uuid
   status            String?
   created_at        DateTime?           @db.Timestamp(6)
-  payment           payment[]
+  payment           payment?
   doctor            doctor?             @relation(fields: [doctor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   patient           patient?            @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   prescription_item prescription_item[]
-  tracking          tracking[]
 }
 
 model prescription_item {
@@ -107,10 +107,11 @@ model schedule {
 }
 
 model tracking {
-  id              String        @id @db.Uuid
-  prescription_id String?       @db.Uuid
-  status          String?
-  prescription    prescription? @relation(fields: [prescription_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String          @id @db.Uuid
+  payment_id String?         @unique @db.Uuid
+  status     TrackingStatus?
+  location   String?
+  payment    payment?        @relation(fields: [payment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user {
@@ -141,4 +142,23 @@ model refresh_token {
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+enum PaymentMethod {
+  CREDIT
+  PROMPTPAY
+  BANK
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  CANCEL
+  SUCCESS
+}
+
+enum TrackingStatus {
+  PREPARE
+  SENDING
+  SUCCESS
 }

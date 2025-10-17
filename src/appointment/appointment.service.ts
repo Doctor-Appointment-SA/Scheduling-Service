@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,6 +9,20 @@ export class AppointmentService {
   constructor(private prisma: PrismaService) {}
  
   async create(createAppointmentDto: CreateAppointmentDto): Promise<appointment> {
+    const { doctor_id, appoint_date } = createAppointmentDto;
+
+    const conflict = await this.prisma.appointment.findFirst({
+      where: {
+        doctor_id, 
+        appoint_date,
+        status: 'confirmed'
+      }
+    })
+
+    if (conflict) {
+      throw new BadRequestException('This time slot is already booked');
+    }
+
     return this.prisma.appointment.create({
       data: createAppointmentDto,
     });
@@ -19,15 +33,15 @@ export class AppointmentService {
     return this.prisma.appointment.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} appointment`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} appointment`;
+  // }
 
-  update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    return `This action updates a #${id} appointment`;
-  }
+  // update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
+  //   return `This action updates a #${id} appointment`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} appointment`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} appointment`;
+  // }
 }
