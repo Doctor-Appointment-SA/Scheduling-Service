@@ -14,7 +14,7 @@ export class CreateAppointmentDto {
 
     @IsString()
     @IsNotEmpty()
-    readonly status: string;
+    readonly status: 'PENDING' | 'CONFIRMED' | 'COMPLETE' | 'CANCEL';
 
     @IsString()
     readonly detail?: string;

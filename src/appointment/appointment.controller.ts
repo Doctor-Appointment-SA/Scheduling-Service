@@ -19,7 +19,7 @@ interface AppointmentCreateInput {
   patient_id: string;
   doctor_id: string;
   appoint_date: string;
-  status: string;
+  status: 'PENDING' | 'CONFIRMED' | 'COMPLETE' | 'CANCEL';
   detail?: string;
 }
 
@@ -53,7 +53,7 @@ export class AppointmentController {
         patient_id: createAppointmentDto.patient_id,
         doctor_id,
         appoint_date: createAppointmentDto.appoint_date,
-        status: "confirmed",
+        status: "CONFIRMED",
         detail: createAppointmentDto.detail,
       };
       console.log(data);

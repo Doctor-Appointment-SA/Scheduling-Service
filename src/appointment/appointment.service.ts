@@ -7,17 +7,19 @@ import { appointment } from '../../generated/prisma';
 @Injectable()
 export class AppointmentService {
   constructor(private prisma: PrismaService) {}
- 
-  async create(createAppointmentDto: CreateAppointmentDto): Promise<appointment> {
+
+  async create(
+    createAppointmentDto: CreateAppointmentDto,
+  ): Promise<appointment> {
     const { doctor_id, appoint_date } = createAppointmentDto;
 
     const conflict = await this.prisma.appointment.findFirst({
       where: {
-        doctor_id, 
+        doctor_id,
         appoint_date,
-        status: 'confirmed'
-      }
-    })
+        status: 'CONFIRMED',
+      },
+    });
 
     if (conflict) {
       throw new BadRequestException('This time slot is already booked');
@@ -35,7 +37,7 @@ export class AppointmentService {
 
   // get all doctor appointments with optional status filter
   async findByDoctor(doctorId: string, status?: string) {
-    const where: any = { doctor_id: doctorId }; 
+    const where: any = { doctor_id: doctorId };
 
     if (status) {
       where.status = status;
@@ -45,8 +47,20 @@ export class AppointmentService {
       where,
       orderBy: {
         appoint_date: 'asc',
-      }
-    })
+      },
+      include: {
+        patient: {
+          include: {
+            user_patient_idTouser: {
+              select: {
+                name: true,
+                lastname: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   // findOne(id: number) {
