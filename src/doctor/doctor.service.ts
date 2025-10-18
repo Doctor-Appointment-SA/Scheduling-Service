@@ -37,15 +37,15 @@ export class DoctorService {
     return this.Prisma.doctor.findMany({ include: { user: true } });
   }
 
-  async findOne(id: number): Promise<doctor | null> {
-    return this.Prisma.doctor.findUnique({ where: { id: id.toString() } });
-  }
+  // async findOne(id: number): Promise<doctor | null> {
+  //   return this.Prisma.doctor.findUnique({ where: { id: id.toString() } });
+  // }
 
-  update(id: number, updateDoctorDto: UpdateDoctorDto) {
-    return `This action updates a #${id} doctor`;
-  }
+  // update(id: number, updateDoctorDto: UpdateDoctorDto) {
+  //   return `This action updates a #${id} doctor`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} doctor`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} doctor`;
+  // }
 }

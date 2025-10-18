@@ -31,7 +31,6 @@ export class AppointmentController {
   create(@Body() createAppointmentDto: CreateAppointmentDto, @Request() req) {
     // console.log(req.user)
     let data: AppointmentCreateInput;
-    console.log("abcdefg");
     if (req.user.role === 'patient') {
       if (!createAppointmentDto.doctor_id) {
         throw new BadRequestException('doctor_id is required for patient');
@@ -84,21 +83,21 @@ export class AppointmentController {
   }
 
   @Get('doctor/:doctor_id')
-  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string) {
-    return this.appointmentService.findByDoctor(doctorId, status);
+  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string, @Query('date') date?: string) {
+    return this.appointmentService.findByDoctor(doctorId, status, date);
+  }
+
+  @Patch(':id')
+  updateDetail(
+    @Param('id') id: string,
+    @Body() updateAppointmentDto: UpdateAppointmentDto,
+  ) {
+    return this.appointmentService.updateDetail(id, updateAppointmentDto);
   }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.appointmentService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateAppointmentDto: UpdateAppointmentDto,
-  // ) {
-  //   return this.appointmentService.update(+id, updateAppointmentDto);
   // }
 
   // @Delete(':id')
