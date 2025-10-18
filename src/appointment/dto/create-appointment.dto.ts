@@ -1,17 +1,21 @@
-import { IsDateString, IsNotEmpty, IsUUID, IsString } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsUUID, IsString, IsOptional } from 'class-validator';
 
 export class CreateAppointmentDto {
-    // ดึง patient_id มาจากระบบ /auth/whoami
-    // @IsUUID()
-    // readonly patient_id: string;
+    @IsUUID()
+    @IsOptional()
+    readonly patient_id?: string;
 
     @IsUUID()
-    readonly doctor_id: string;
+    @IsOptional()
+    readonly doctor_id?: string;
 
     @IsDateString()
     readonly appoint_date: string;
 
     @IsString()
     @IsNotEmpty()
-    readonly status: string;
+    readonly status: 'PENDING' | 'CONFIRMED' | 'COMPLETE' | 'CANCEL';
+
+    @IsString()
+    readonly detail?: string;
 }

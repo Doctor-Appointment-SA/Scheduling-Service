@@ -20,7 +20,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       // เก็บ user object ลงใน req.user
       (req as any).user = response.data;
-      console.log("Authenticated user:", response.data);
+      // console.log("Authenticated user:", response.data);
       next();
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');
