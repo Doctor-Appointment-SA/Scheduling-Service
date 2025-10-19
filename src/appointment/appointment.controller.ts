@@ -10,6 +10,7 @@ import {
   UseGuards,
   BadRequestException,
   Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -43,7 +44,7 @@ export class AppointmentController {
         status: createAppointmentDto.status,
       };
     } else if (req.user.role === 'doctor') {
-      console.log("================");
+      console.log('================');
       if (!createAppointmentDto.patient_id) {
         throw new BadRequestException('patient_id is required for patient');
       }
@@ -52,7 +53,7 @@ export class AppointmentController {
         patient_id: createAppointmentDto.patient_id,
         doctor_id,
         appoint_date: createAppointmentDto.appoint_date,
-        status: "CONFIRMED",
+        status: 'CONFIRMED',
         detail: createAppointmentDto.detail,
       };
       console.log(data);
@@ -69,30 +70,44 @@ export class AppointmentController {
   findAll() {
     return this.appointmentService.findAll();
   }
-  
+
   // for logged-in doctor to get their own appointments
   @Get('doctor/me')
   findMyAppointments(@Request() req, @Query('status') status?: string) {
     const doctorId = req.user.id;
 
     if (req.user.role !== 'doctor') {
-      throw new BadRequestException('Only doctors can access their appointments');
+      throw new BadRequestException(
+        'Only doctors can access their appointments',
+      );
     }
 
     return this.appointmentService.findByDoctor(doctorId, status);
   }
 
   @Get('doctor/:doctor_id')
-  findByDoctor(@Param('doctor_id') doctorId: string, @Query('status') status?: string, @Query('date') date?: string) {
+  findByDoctor(
+    @Param('doctor_id') doctorId: string,
+    @Query('status') status?: string,
+    @Query('date') date?: string,
+  ) {
     return this.appointmentService.findByDoctor(doctorId, status, date);
   }
 
-  @Patch(':id')
+  @Patch(':id/detail')
   updateDetail(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {
     return this.appointmentService.updateDetail(id, updateAppointmentDto);
+  }
+
+  @Patch(':id/status')
+  updateStatus(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateAppointmentDto: UpdateAppointmentDto,
+  ) {
+    return this.appointmentService.updateStatus(id, updateAppointmentDto);
   }
 
   // @Get(':id')
