@@ -15,6 +15,7 @@ import {
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 interface AppointmentCreateInput {
   patient_id: string;
@@ -28,9 +29,9 @@ interface AppointmentCreateInput {
 export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createAppointmentDto: CreateAppointmentDto, @Request() req) {
-    // console.log(req.user)
     let data: AppointmentCreateInput;
     if (req.user.role === 'patient') {
       if (!createAppointmentDto.doctor_id) {
@@ -72,6 +73,7 @@ export class AppointmentController {
   }
 
   // for logged-in doctor to get their own appointments
+  @UseGuards(JwtAuthGuard)
   @Get('doctor/me')
   findMyAppointments(@Request() req, @Query('status') status?: string) {
     const doctorId = req.user.id;
