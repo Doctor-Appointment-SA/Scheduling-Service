@@ -25,7 +25,7 @@ interface AppointmentCreateInput {
   detail?: string;
 }
 
-@Controller('appointment')
+@Controller('')
 export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 

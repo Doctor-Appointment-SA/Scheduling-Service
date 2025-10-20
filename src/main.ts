@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({stopAtFirstError: true,}));
-  app.setGlobalPrefix('api'); 
+  app.setGlobalPrefix('api/appt'); 
   app.enableCors({
     origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], // exact origins
     methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
