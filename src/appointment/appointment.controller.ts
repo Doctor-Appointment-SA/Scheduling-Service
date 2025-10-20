@@ -37,7 +37,7 @@ export class AppointmentController {
       if (!createAppointmentDto.doctor_id) {
         throw new BadRequestException('doctor_id is required for patient');
       }
-      const patient_id = req.user.id;
+      const patient_id = req.user.sub;
       data = {
         patient_id,
         doctor_id: createAppointmentDto.doctor_id,
@@ -49,7 +49,7 @@ export class AppointmentController {
       if (!createAppointmentDto.patient_id) {
         throw new BadRequestException('patient_id is required for patient');
       }
-      const doctor_id = req.user.id;
+      const doctor_id = req.user.sub;
       data = {
         patient_id: createAppointmentDto.patient_id,
         doctor_id,
